@@ -27,6 +27,7 @@
   "homepage": "https://github.com/danielearwicker/meta-object#readme",
   "devDependencies": {
     "@types/tape": "^4.2.28",
+    "coveralls": "^2.11.15",
     "istanbul": "^0.4.5",
     "tape": "^4.6.3",
     "typescript": "^2.1.4"
