@@ -1,6 +1,6 @@
 {
   "name": "meta-object",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Abstraction over the mutable properties of an object hierarchy",
   "main": "built/index.js",
   "types": "built/index.d.ts",
