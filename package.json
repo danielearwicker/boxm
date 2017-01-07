@@ -1,0 +1,25 @@
+{
+  "name": "meta-object",
+  "version": "0.1.0",
+  "description": "Abstraction over the mutable properties of an object hierarchy",
+  "main": "built/index.js",
+  "types": "built/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielearwicker/meta-object.git"
+  },
+  "keywords": [
+    "typescript",
+    "react",
+    "mobx"
+  ],
+  "author": "Daniel Earwicker <dan@earwicker.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/danielearwicker/meta-object/issues"
+  },
+  "homepage": "https://github.com/danielearwicker/meta-object#readme"
+}
