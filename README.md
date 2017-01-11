@@ -1,4 +1,4 @@
-# meta-object
+# boxm
 _Turning properties into objects_
 
 [![Build Status](https://travis-ci.org/danielearwicker/meta-object.svg?branch=master)](https://travis-ci.org/danielearwicker/meta-object)
@@ -7,19 +7,19 @@ _Turning properties into objects_
 ## Usage
 
 ```ts
-import { from } from "meta-object"
+import { box } from "boxm"
 
 const person = new Person();
 
 // get a reference to the firstName property
-const firstNameProperty = from(person).firstName;
+const firstNameProperty = box(person).firstName;
 
 // get/set the property value
 const oldName = firstNameProperty.get();
 firstNameProperty.set("Jim");
 
 // grab several references in one hit (destructuring)
-const { firstName, lastName, dateOfBirth } = from(person);
+const { firstName, lastName, dateOfBirth } = box(person);
 ```
 
 ## Installation
@@ -80,7 +80,7 @@ function TextInput(props: TextInputProps) {
 With such a component you can describe the UI:
 
 ```tsx
-const { firstName, lastName } = from(simpson);
+const { firstName, lastName } = box(simpson);
 
 return (
     <div>
@@ -94,4 +94,4 @@ return (
 );
 ```
 
-This achieves simple two-way binding, via the `from` function, with obvious clarity and static type-safety. If we'd just said `person.lastName` we'd be passing the value, so the `TextInput` component would not be able to modify the value, but by saying `from(person).lastName` we're passing a wrapper that supports both `get` and `set` operations on the value of `person.lastName`.
+This achieves simple two-way binding, via the `box` function, with obvious clarity and static type-safety. If we'd just said `person.lastName` we'd be passing the value, so the `TextInput` component would not be able to modify the value, but by saying `box(person).lastName` we're passing a wrapper that supports both `get` and `set` operations on the value of `person.lastName`.
