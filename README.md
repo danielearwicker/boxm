@@ -7,6 +7,8 @@ _Turning properties into objects_
 ## Usage
 
 ```ts
+import { from } from "meta-object"
+
 const person = new Person();
 
 // get a reference to the firstName property
@@ -19,6 +21,14 @@ firstNameProperty.set("Jim");
 // grab several references in one hit (destructuring)
 const { firstName, lastName, dateOfBirth } = from(person);
 ```
+
+## Installation
+
+```
+npm install --save meta-object
+```
+
+(Type declarations are included of course.)
 
 ## Dependency-free
 

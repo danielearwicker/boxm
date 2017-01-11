@@ -1,4 +1,10 @@
 
+let proxyEnabled = typeof Proxy !== "undefined";
+
+export function enableProxy(enabled: boolean) {
+    proxyEnabled = enabled;
+}
+
 export interface MetaValue<T> { 
     get(): T;
     set(v: T): void;
@@ -8,20 +14,29 @@ export type MetaObject<T> = {
     readonly [P in keyof T]: MetaValue<T[P]>;
 };
 
+function makeMetaValue(obj: any, key: string) {
+    // Make the value proxy a function, this makes mobx leave it alone!
+    const value = (() => {}) as any;
+    value.get = () => (obj as any)[key];
+    value.set = (val: any) => (obj as any)[key] = val;
+    return value;
+}
+
+const handler: ProxyHandler<any> = {
+    get(target: any, key: PropertyKey) {
+        return makeMetaValue(target, key as string);
+    }
+}
+
 export function from<T>(obj: T): MetaObject<T> {
 
-    // TODO - if Proxy support available (everywhere except IE!), create a proxy 
-    // so we only generate property wrappers on demand. The approach below is 
-    // then the fallback for IE 9 thru 11.
+    if (proxyEnabled) {
+        return new Proxy(obj, handler);
+    }
 
     var fallbackProxy: any = {};
     for (const key of Object.keys(obj)) {
-
-        // Make the value proxy a function, this makes mobx leave it alone!
-        const value = (() => {}) as any;
-        value.get = () => (obj as any)[key];
-        value.set = (val: any) => (obj as any)[key] = val;
-        fallbackProxy[key] = value;
+        fallbackProxy[key] = makeMetaValue(obj, key);
     }
 
     return fallbackProxy;
