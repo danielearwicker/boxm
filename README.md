@@ -70,17 +70,15 @@ function TextInput(props: TextInputProps) {
 With such a component you can describe the UI:
 
 ```tsx
+const { firstName, lastName } = from(simpson);
+
 return (
     <div>
         <div>
-            <label>First name: 
-                <TextInput text={from(person).firstName}/> 
-            </label>
+            <label>First name: <TextInput text={firstName}/></label>
         </div>
         <div>
-            <label>Last name: 
-                <TextInput text={from(person).lastName}/> 
-            </label>
+            <label>Last name: <TextInput text={lastName}/></label>
         </div>
     </div>
 );
