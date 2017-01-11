@@ -43,7 +43,7 @@ Properties are named features of objects and so to address one for reading/writi
 It's better to make an object with a static `get`/`set` interface that encapsulates one property:
 
 ```ts
-export interface MetaValue<T> { 
+export interface BoxedValue<T> { 
     get(): T;
     set(v: T): void;
 }
@@ -66,7 +66,7 @@ And in React you can create modular components. These might be as elemental as a
 
 ```ts
 interface TextInputProps {
-    text: MetaValue<string>;  // see MetaValue<T> declaration above
+    text: BoxedValue<string>;  // see BoxedValue<T> declaration above
 }
 
 function TextInput(props: TextInputProps) {
