@@ -15,6 +15,9 @@ const firstNameProperty = from(person).firstName;
 // get/set the property value
 const oldName = firstNameProperty.get();
 firstNameProperty.set("Jim");
+
+// grab several references in one hit (destructuring)
+const { firstName, lastName, dateOfBirth } = from(person);
 ```
 
 ## Dependency-free
