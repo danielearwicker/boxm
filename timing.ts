@@ -1,4 +1,4 @@
-import { from, enableProxy } from "./index"
+import { box, enableProxy } from "./index"
 
 // Quick benchmark of Proxy versus fallback. I find Proxy is about 5x faster.
 
@@ -13,8 +13,8 @@ for (const mode of [true, false]) {
             junk1: 1, junk2: 1, junk3: 1, 
             junk4: 1, junk5: 1, junk6: 1,
             junk7: 1, junk8: 1, junk9: 1 };
-        const str = from(o).str;
-        const num = from(o).num;
+        const str = box(o).str;
+        const num = box(o).num;
         str.get();
         num.get();
         str.set(str.get() + num.get());
