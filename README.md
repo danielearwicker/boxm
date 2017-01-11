@@ -32,7 +32,7 @@ npm install --save boxm
 
 ## Dependency-free
 
-Although it is useful with React and MobX, `boxm` has no runtime package dependencies itself.
+Although it is useful with React and MobX (and the name is a play on MobX, as well as *box 'em*), `boxm` has no runtime package dependencies itself.
 
 ## Purpose
 
@@ -50,6 +50,8 @@ export interface BoxedValue<T> {
 ```
 
 This can then be passed around as a first-class value. All that's needed is a succinct way to create such an object.
+
+[More background here](http://danielearwicker.github.io/Box_em_Property_references_for_TypeScript.html)
 
 ## Fun, Exciting Use-case
 
