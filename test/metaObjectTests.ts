@@ -4,9 +4,9 @@ import { box, enableProxy } from "../index"
 
 for (const mode of [true, false]) {
 
-    enableProxy(mode);
+    test(`Object literal properties, proxy=${mode}`, t => {
 
-    test(`Object literal properties, proxy={mode}`, t => {
+        enableProxy(mode);
 
         const o = { str: "hello", num: 5 };
 
@@ -29,7 +29,9 @@ for (const mode of [true, false]) {
         t.end();
     });
 
-    test(`Paths, proxy={mode}`, t => {
+    test(`Paths, proxy=${mode}`, t => {
+
+        enableProxy(mode);
 
         const first = { 
             day: "wednesday", 
