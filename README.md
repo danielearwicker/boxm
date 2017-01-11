@@ -4,11 +4,41 @@ _Turning properties into objects_
 [![Build Status](https://travis-ci.org/danielearwicker/meta-object.svg?branch=master)](https://travis-ci.org/danielearwicker/meta-object)
 [![Coverage Status](https://coveralls.io/repos/danielearwicker/meta-object/badge.svg?branch=master&service=github)](https://coveralls.io/github/danielearwicker/meta-object?branch=master)
 
-## Prerequisites
+## Usage
 
-`meta-object` has no package dependencies itself. It assumes a JS runtime that is ES5 + `Object.assign`.
+```ts
+const person = new Person();
 
-## Use case
+// get a reference to the firstName property
+const firstNameProperty = from(person).firstName;
+
+// get/set the property value
+const oldName = firstNameProperty.get();
+firstNameProperty.set("Jim");
+```
+
+## Dependency-free
+
+Although it is useful with React and MobX, `meta-object` has no runtime package dependencies itself.
+
+## Purpose
+
+This library provides a way to conveniently grab a "reference" to a mutable property, with static type safety for TypeScript users.
+
+Properties are named features of objects and so to address one for reading/writing you need to know the object and the name of the property. This can lead to ugly bifurcation and the use of "stringly typed" interfaces.
+
+It's better to make an object with a static `get`/`set` interface that encapsulates one property:
+
+```ts
+export interface MetaValue<T> { 
+    get(): T;
+    set(v: T): void;
+}
+```
+
+This can then be passed around as a first-class value. All that's needed is a succinct way to create such an object.
+
+## Fun, Exciting Use-case
 
 In MobX you typically have an object holding the current state of the UI (or a piece of the UI):
 
@@ -23,13 +53,13 @@ And in React you can create modular components. These might be as elemental as a
 
 ```ts
 interface TextInputProps {
-    text: Value<string>;  // see Value<T> declaration below
+    text: MetaValue<string>;  // see MetaValue<T> declaration above
 }
 
 function TextInput(props: TextInputProps) {
     return <input type="text"
-        value={props.text.value}
-        onChange={e => props.text.value = (e.target as HTMLInputElement).value}
+        value={props.text.get()}
+        onChange={e => props.text.set((e.target as HTMLInputElement).value)}
         />
 }
 ```
@@ -41,53 +71,16 @@ return (
     <div>
         <div>
             <label>First name: 
-                <TextInput text={from(person)("firstName")}/> 
+                <TextInput text={from(person).firstName}/> 
             </label>
         </div>
         <div>
             <label>Last name: 
-                <TextInput text={from(person)("lastName")}/> 
+                <TextInput text={from(person).lastName}/> 
             </label>
         </div>
     </div>
 );
 ```
 
-This achieves simple two-way binding, via the `from` function. Although the property name is specified as a string, it is statically type checked, as is the property's value type.
-
-## Dry theory
-
-A `MetaObject` is a wrapper around an ordinary object, which provides access its properties (it's actually a function):
-
-```ts
-export interface MetaObject<T> {
-    <K extends keyof T>(name: K): MetaProperty<T[K]>;
-}
-```
-
-The `from` function can make this wrapper from any object:
-
-```ts
-function from<T>(obj: T): MetaObject<T>;
-```
-
-The purpose is **not** to allow dynamic access to the properties by name (JavaScript already allows that). The purpose is the exact opposite: to allow a reference to a mutable property to be created with *static* type safety. 
-
-The type declaration means that the `name` must be a string that matches the name of a property in `T`. Also the returned `MetaProperty` will wrap a value of that property's type.
-
-The simplest representation of a mutable value is:
-
-```ts
-export interface Value<T> { value: T; }
-```
-
-That is, an object with a property called `value`. By housing it in object, it becomes "first class" so we can pass it around as a reference (e.g. as a prop to a React component).
-
-A property obtained from a `MetaObject` is both a `Value` (so you can get or set the property's value) and also a `MetaObject` (so you can access its own properties, if any).
-
-```ts
-export interface MetaProperty<T> 
-       extends MetaObject<T>, Value<T> { }
-```
-
-This recursive nature means that you can follow a path down a hierarchy of objects.
+This achieves simple two-way binding, via the `from` function, with obvious clarity and static type-safety. If we'd just said `person.lastName` we'd be passing the value, so the `TextInput` component would not be able to modify the value, but by saying `from(person).lastName` we're passing a wrapper that supports both `get` and `set` operations on the value of `person.lastName`.

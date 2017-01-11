@@ -1,6 +1,6 @@
 {
   "name": "meta-object",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Abstraction over the mutable properties of an object hierarchy",
   "main": "built/index.js",
   "types": "built/index.d.ts",
@@ -8,7 +8,8 @@
     "build": "tsc",
     "test": "tape built/test/**/*.js",
     "coverage": "istanbul cover tape built/test/**/*.js",
-    "all": "npm run build && npm run test && npm run coverage"
+    "all": "npm run build && npm run test && npm run coverage",
+    "prepublish": "npm run build && npm run test"
   },
   "repository": {
     "type": "git",

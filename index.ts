@@ -1,35 +1,29 @@
-export interface MetaObject<T> {
-    <K extends keyof T>(name: K): MetaProperty<T[K]>;
+
+export interface MetaValue<T> { 
+    get(): T;
+    set(v: T): void;
 }
 
-export interface Value<T> { value: T; }
-
-export interface MetaProperty<T>
-       extends MetaObject<T>, Value<T> { }
-
-function bind<T, K extends keyof T>(
-    obj: T, 
-    name: K
-): MetaProperty<T[K]> {
-
-    function f<C extends keyof T[K]>(
-        childName: C
-    ): MetaProperty<T[K][C]> {
-        return bind(obj[name], childName);
-    }
-
-    Object.defineProperty(f, "value", {
-        get() {
-            return obj[name];
-        },
-        set(v) {
-            obj[name] = v;
-        }
-    });
-
-    return f as any;
-}
+export type MetaObject<T> = {
+    readonly [P in keyof T]: MetaValue<T[P]>;
+};
 
 export function from<T>(obj: T): MetaObject<T> {
-    return <K extends keyof T>(name: K) => bind(obj, name);
+
+    // TODO - if Proxy support available (everywhere except IE!), create a proxy 
+    // so we only generate property wrappers on demand. The approach below is 
+    // then the fallback for IE 9 thru 11.
+
+    var fallbackProxy: any = {};
+    for (const key of Object.keys(obj)) {
+
+        // Make the value proxy a function, this makes mobx leave it alone!
+        const value = (() => {}) as any;
+        value.get = () => (obj as any)[key];
+        value.set = (val: any) => (obj as any)[key] = val;
+        fallbackProxy[key] = value;
+    }
+
+    return fallbackProxy;
 }
+
