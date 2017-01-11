@@ -14,9 +14,11 @@ export type MetaObject<T> = {
     readonly [P in keyof T]: MetaValue<T[P]>;
 };
 
+const prototype: MetaValue<any> = {} as any;
+
 function makeMetaValue(obj: any, key: string) {
-    // Make the value proxy a function, this makes mobx leave it alone!
-    const value = (() => {}) as any;
+    // MobX will leave it alone if it has a prototype    
+    const value = Object.create(prototype);
     value.get = () => (obj as any)[key];
     value.set = (val: any) => (obj as any)[key] = val;
     return value;
