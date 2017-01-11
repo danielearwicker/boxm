@@ -1,8 +1,8 @@
 # boxm
 _Turning properties into objects_
 
-[![Build Status](https://travis-ci.org/danielearwicker/meta-object.svg?branch=master)](https://travis-ci.org/danielearwicker/meta-object)
-[![Coverage Status](https://coveralls.io/repos/danielearwicker/meta-object/badge.svg?branch=master&service=github)](https://coveralls.io/github/danielearwicker/meta-object?branch=master)
+[![Build Status](https://travis-ci.org/danielearwicker/boxm.svg?branch=master)](https://travis-ci.org/danielearwicker/boxm)
+[![Coverage Status](https://coveralls.io/repos/danielearwicker/boxm/badge.svg?branch=master&service=github)](https://coveralls.io/github/danielearwicker/boxm?branch=master)
 
 ## Usage
 
@@ -25,14 +25,14 @@ const { firstName, lastName, dateOfBirth } = box(person);
 ## Installation
 
 ```
-npm install --save meta-object
+npm install --save boxm
 ```
 
 (Type declarations are included of course.)
 
 ## Dependency-free
 
-Although it is useful with React and MobX, `meta-object` has no runtime package dependencies itself.
+Although it is useful with React and MobX, `boxm` has no runtime package dependencies itself.
 
 ## Purpose
 
