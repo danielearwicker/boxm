@@ -16,7 +16,7 @@ export type BoxedObject<T> = {
 
 const prototype: BoxedValue<any> = {} as any;
 
-function makeBoxedValue(obj: any, key: string) {
+export function makeBoxedValue(obj: any, key: string): BoxedValue<any> {
     // MobX will leave it alone if it has a prototype    
     const value = Object.create(prototype);
     value.get = () => (obj as any)[key];
@@ -24,23 +24,34 @@ function makeBoxedValue(obj: any, key: string) {
     return value;
 }
 
-const handler: ProxyHandler<any> = {
-    get(target: any, key: PropertyKey) {
-        return makeBoxedValue(target, key as string);
+export class Boxer {
+
+    handler: ProxyHandler<any>;
+
+    constructor(private propertyBoxer: (obj: any, key: string) => BoxedValue<any>) {        
+        this.handler = {
+            get(target: any, key: PropertyKey) {
+                return propertyBoxer(target, key as string);
+            }
+        };
+    }
+
+    box<T>(obj: T): BoxedObject<T> {
+        if (proxyEnabled) {
+            return new Proxy(obj, this.handler);
+        }
+
+        var fallbackProxy: any = {};
+        for (const key of Object.keys(obj)) {
+            fallbackProxy[key] = this.propertyBoxer(obj, key);
+        }
+
+        return fallbackProxy;
     }
 }
 
-export function box<T>(obj: T): BoxedObject<T> {
+const defaultBoxer = new Boxer(makeBoxedValue);
 
-    if (proxyEnabled) {
-        return new Proxy(obj, handler);
-    }
-
-    var fallbackProxy: any = {};
-    for (const key of Object.keys(obj)) {
-        fallbackProxy[key] = makeBoxedValue(obj, key);
-    }
-
-    return fallbackProxy;
+export function box<T>(obj: T) {
+    return defaultBoxer.box(obj);
 }
-
