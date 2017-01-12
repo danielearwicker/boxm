@@ -24,34 +24,25 @@ export function makeBoxedValue(obj: any, key: string): BoxedValue<any> {
     return value;
 }
 
-export class Boxer {
+export function boxer(propertyBoxer: (obj: any, key: string) => BoxedValue<any>) {
+    const handler = {
+        get(target: any, key: PropertyKey) {
+            return propertyBoxer(target, key as string);
+        }
+    };
 
-    handler: ProxyHandler<any>;
-
-    constructor(private propertyBoxer: (obj: any, key: string) => BoxedValue<any>) {        
-        this.handler = {
-            get(target: any, key: PropertyKey) {
-                return propertyBoxer(target, key as string);
-            }
-        };
-    }
-
-    box<T>(obj: T): BoxedObject<T> {
+    return <T>(obj: T): BoxedObject<T> => {
         if (proxyEnabled) {
-            return new Proxy(obj, this.handler);
+            return new Proxy(obj, handler);
         }
 
         var fallbackProxy: any = {};
         for (const key of Object.keys(obj)) {
-            fallbackProxy[key] = this.propertyBoxer(obj, key);
+            fallbackProxy[key] = propertyBoxer(obj, key);
         }
 
         return fallbackProxy;
     }
 }
 
-const defaultBoxer = new Boxer(makeBoxedValue);
-
-export function box<T>(obj: T) {
-    return defaultBoxer.box(obj);
-}
+export const box = boxer(makeBoxedValue);

@@ -97,3 +97,44 @@ return (
 ```
 
 This achieves simple two-way binding, via the `box` function, with obvious clarity and static type-safety. If we'd just said `person.lastName` we'd be passing the value, so the `TextInput` component would not be able to modify the value, but by saying `box(person).lastName` we're passing a wrapper that supports both `get` and `set` operations on the value of `person.lastName`.
+
+## Advanced API
+
+You can create a `box`-like function from any function that can create a `BoxValue`, by wrapping it with the `boxer` higher order function:
+
+```ts
+function boxer(
+    propertyBoxer: (obj: any, key: string) => BoxedValue<any>
+): <T>(obj: T) => BoxedObject<T>;
+```
+
+So it accepts a "dynamic" means of boxing a single property, and returns a function that provides the same facility through the statically type-checked API of `boxm`.
+
+The function `makeBoxedValue`, is suitable for passing directly to `boxer` to duplicate the standard behaviour:
+
+```ts
+function makeBoxedValue(obj: any, key: string): BoxedValue<any>;
+```
+
+(The returned object has a prototype, which serves as a hint to MobX to handle it transparently.)
+
+Combining these two pieces, we get the implementation of `box`:
+
+```ts
+const box = boxer(makeBoxedValue);
+```
+
+For example, this is how [bidi-mobx](https://github.com/danielearwicker/bidi-mobx) defines its own MobX-optimal version of `box`. It falls back to `makeBoxedValue` if it can't do any better:
+
+```ts
+const box = boxer((obj, key) => {
+    const atom = (isObservable(obj, key) || isComputed(obj, key)) 
+        && extras.getAtom(obj, key) as any as BoxedValue<any>;
+
+    return atom || makeBoxedValue(obj, key);
+});
+```
+
+## License
+
+MIT

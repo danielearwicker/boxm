@@ -1,6 +1,6 @@
 {
   "name": "boxm",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Abstraction over the mutable properties of an object hierarchy",
   "main": "built/index.js",
   "types": "built/index.d.ts",
